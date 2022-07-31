@@ -1,17 +1,27 @@
 <template>
     <base-card>
-        <form>
+        <base-dialog v-if="inputIsInvalid" title="Invalid Input" @close="confirmError">
+            <!-- here we provide custom content for slots -->
+            <template v-slot:default>
+                <p>Unfortunately, at least one input value is invalid.</p>
+                <p>Please check all inputs and make sure you enter valid data.</p>
+            </template>
+            <template #actions>
+                <base-button @click="confirmError">Okay</base-button>
+            </template>
+        </base-dialog>
+        <form @submit.prevent="submitData">
             <div class="form-control">
                 <label for="title">Title</label>
-                <input id="title" name="title" type="text">
+                <input id="title" name="title" type="text" ref="titleInput">
             </div>
             <div class="form-control">
                 <label for="description">Description</label>
-                <textarea id="description" name="description" rows="10"></textarea>
+                <textarea id="description" name="description" rows="10" ref="descInput"></textarea>
             </div>
             <div class="form-control">
                 <label for="link">Link</label>
-                <input id="link" name="link" type="url">
+                <input id="link" name="link" type="url" ref="linkInput">
             </div>
             <div>
                 <base-button type="submit">Add Resource</base-button>
@@ -21,11 +31,33 @@
 </template>
 
 <script>
-import BaseCard from "@/components/UI/BaseCard";
 
 export default {
     name: 'AddResource',
-    components: {BaseCard},
+    inject: ['addResource'],
+    data() {
+        return {
+            inputIsInvalid: false,
+        }
+    },
+    methods: {
+        submitData() {
+            const enteredTitle = this.$refs.titleInput.value;
+            const enteredDescription = this.$refs.descInput.value;
+            const enteredUrl = this.$refs.linkInput.value;
+
+            if (enteredTitle.trim() === '' || enteredDescription.trim() === '' || enteredUrl.trim() === '') {
+                // this will open the modal
+                this.inputIsInvalid = true;
+                return;
+            }
+
+            this.addResource(enteredTitle, enteredDescription, enteredUrl);
+        },
+        confirmError() {
+            this.inputIsInvalid = false;
+        },
+    },
 
 }
 </script>

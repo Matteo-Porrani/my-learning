@@ -3,7 +3,10 @@
         <base-card>
             <header>
                 <h3>{{ title }}</h3>
-                <base-button mode="flat">Delete</base-button>
+                <div>
+                    <base-button @click="deleteResource(id)" mode="flat">Delete</base-button>
+                    <base-button @click="logResource" mode="flat">Log</base-button>
+                </div>
             </header>
             <p>{{ description }}</p>
             <nav>
@@ -18,11 +21,18 @@ import BaseButton from "@/components/UI/BaseButton";
 export default {
     name: 'LearningResource',
     components: {BaseButton},
+    inject: ['deleteResource'],
     props: [
+        'id',
         'title',
         'description',
         'link'
     ],
+    methods: {
+        logResource() {
+            console.log(this.title);
+        },
+    }
 }
 </script>
 
